@@ -1,0 +1,41 @@
+
+# this file contains DB structure and static data; it must be available on the CLASSPATH
+liquibaseFile: migrations.xml
+
+# database configuration
+# Important note: isolation level is set in JDBC URL to 'Serializable' which ensures higher consistency level
+database:
+  driverClass: org.h2.Driver
+  url: jdbc:h2:mem:transfer-db;LOCK_MODE=1
+  user: sa
+  password: sa
+
+  # connection pool configuration
+  maxWaitForConnection: 1s
+  minSize: 8
+  maxSize: 32
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+
+  # other database connection properties
+  properties:
+    charSet: UTF-8
+
+
+# Jetty configuration (this is VERY simplistic configuration used just for the sake of this sample app)
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+    - type: http
+      port: 8081
+
+# logging configuration
+logging:
+  level: INFO
+  loggers:
+    com.example.app: DEBUG
+
+  appenders:
+    - type: console

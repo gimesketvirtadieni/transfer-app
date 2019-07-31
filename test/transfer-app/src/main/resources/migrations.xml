@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="Currency-1" author="Andrej">
+        <createTable tableName="CURRENCY">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ISO_CODE" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint
+                constraintName="IDX_ISO_CODE"
+                columnNames="ISO_CODE"
+                tableName="CURRENCY"/>
+    </changeSet>
+
+    <changeSet id="Customer-1" author="Andrej">
+        <createTable tableName="CUSTOMER">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="STATE_CODE" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_INDIVIDUAL" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FIRSTNAME" type="VARCHAR(255)"/>
+            <column name="LASTNAME" type="VARCHAR(255)"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="Account-1" author="Andrej">
+        <createTable tableName="ACCOUNT">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NUMBER" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CUSTOMER_ID" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="FK_CUSTOMER_ID" references="CUSTOMER(ID)"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint
+                constraintName="IDX_NUMBER"
+                columnNames="NUMBER"
+                tableName="ACCOUNT"/>
+    </changeSet>
+
+    <changeSet id="AccountBalance-1" author="Andrej">
+        <createTable tableName="ACCOUNT_BALANCE">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ACCOUNT_ID" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="FK_ACCOUNT_ID" references="ACCOUNT(ID)"/>
+            </column>
+            <column name="CURRENCY_ID" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="FK_CURRENCY_ID" references="CURRENCY(ID)"/>
+            </column>
+            <column name="CURRENT_BALANCE" type="DECIMAL(20, 4)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint
+                constraintName="IDX_ACCOUNT_CURRENCY"
+                columnNames="ACCOUNT_ID, CURRENCY_ID"
+                tableName="ACCOUNT_BALANCE"/>
+    </changeSet>
+
+    <changeSet id="Transaction-1" author="Andrej">
+        <createTable tableName="TRANSACTION">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REGISTRATION_DATE" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="TransactionItem-1" author="Andrej">
+        <createTable tableName="TRANSACTION_ITEM">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="TRANSACTION_ID" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="FK_TRANSACTION_ID" references="TRANSACTION(ID)"/>
+            </column>
+            <column name="ACCOUNT_BALANCE_ID" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="FK_ACCOUNT_BALANCE_ID" references="ACCOUNT_BALANCE(ID)"/>
+            </column>
+            <column name="DEBIT_AMOUNT" type="DECIMAL(20, 4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREDIT_AMOUNT" type="DECIMAL(20, 4)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="Currencies-1" author="Andrej">
+        <insert tableName="CURRENCY">
+            <column name="ID" valueNumeric="1"/>
+            <column name="ISO_CODE" value="EUR"/>
+            <column name="NAME" value="Euro"/>
+        </insert>
+        <insert tableName="CURRENCY">
+            <column name="ID" valueNumeric="2"/>
+            <column name="ISO_CODE" value="USD"/>
+            <column name="NAME" value="Dollar"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="Customers-1" author="Andrej">
+        <insert tableName="CUSTOMER">
+            <column name="ID" valueNumeric="1"/>
+            <column name="STATE_CODE" value="12345"/>
+            <column name="IS_INDIVIDUAL" valueBoolean="TRUE"/>
+            <column name="FIRSTNAME" value="Vardas1"/>
+            <column name="LASTNAME" value="Pavarde1"/>
+        </insert>
+        <insert tableName="CUSTOMER">
+            <column name="ID" valueNumeric="2"/>
+            <column name="STATE_CODE" value="12346"/>
+            <column name="IS_INDIVIDUAL" valueBoolean="TRUE"/>
+            <column name="FIRSTNAME" value="Vardas2"/>
+            <column name="LASTNAME" value="Pavarde2"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="Accounts-1" author="Andrej">
+        <insert tableName="ACCOUNT">
+            <column name="ID" valueNumeric="1"/>
+            <column name="NUMBER" value="LT12100001110100101"/>
+            <column name="CUSTOMER_ID" valueNumeric="1"/>
+        </insert>
+        <insert tableName="ACCOUNT">
+            <column name="ID" valueNumeric="2"/>
+            <column name="NUMBER" value="LT12100001110100102"/>
+            <column name="CUSTOMER_ID" valueNumeric="1"/>
+        </insert>
+        <insert tableName="ACCOUNT">
+            <column name="ID" valueNumeric="3"/>
+            <column name="NUMBER" value="LT12100001110100103"/>
+            <column name="CUSTOMER_ID" valueNumeric="2"/>
+        </insert>
+        <insert tableName="ACCOUNT">
+            <column name="ID" valueNumeric="4"/>
+            <column name="NUMBER" value="LT12100001110100104"/>
+            <column name="CUSTOMER_ID" valueNumeric="2"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="AccountBalances-1" author="Andrej">
+        <insert tableName="ACCOUNT_BALANCE">
+            <column name="ID" valueNumeric="1"/>
+            <column name="ACCOUNT_ID" valueNumeric="1"/>
+            <column name="CURRENCY_ID" valueNumeric="1"/>
+            <column name="CURRENT_BALANCE" valueNumeric="100.01"/>
+        </insert>
+        <insert tableName="ACCOUNT_BALANCE">
+            <column name="ID" valueNumeric="2"/>
+            <column name="ACCOUNT_ID" valueNumeric="2"/>
+            <column name="CURRENCY_ID" valueNumeric="1"/>
+            <column name="CURRENT_BALANCE" valueNumeric="200.02"/>
+        </insert>
+        <insert tableName="ACCOUNT_BALANCE">
+            <column name="ID" valueNumeric="3"/>
+            <column name="ACCOUNT_ID" valueNumeric="3"/>
+            <column name="CURRENCY_ID" valueNumeric="1"/>
+            <column name="CURRENT_BALANCE" valueNumeric="300.03"/>
+        </insert>
+        <insert tableName="ACCOUNT_BALANCE">
+            <column name="ID" valueNumeric="4"/>
+            <column name="ACCOUNT_ID" valueNumeric="4"/>
+            <column name="CURRENCY_ID" valueNumeric="1"/>
+            <column name="CURRENT_BALANCE" valueNumeric="400.04"/>
+        </insert>
+        <insert tableName="ACCOUNT_BALANCE">
+            <column name="ID" valueNumeric="5"/>
+            <column name="ACCOUNT_ID" valueNumeric="4"/>
+            <column name="CURRENCY_ID" valueNumeric="2"/>
+            <column name="CURRENT_BALANCE" valueNumeric="500.05"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
